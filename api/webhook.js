@@ -1,5 +1,9 @@
+// /api/webhook.js
 import { v4 as uuidv4 } from "uuid";
-import dialogflow from "@google-cloud/dialogflow";
+import * as dialogflow from "@google-cloud/dialogflow";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // ====== استدعاء المتغيرات من Vercel Environment ======
 const projectId = process.env.DIALOGFLOW_PROJECT_ID;
@@ -34,7 +38,7 @@ export default async function handler(req, res) {
       queryInput: {
         text: {
           text: message,
-          languageCode: "ar", // أو en إذا محادثة بالإنجليزية
+          languageCode: "ar", // أو "en"
         },
       },
     };
