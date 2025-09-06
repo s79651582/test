@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
-const dialogflow = require('@google-cloud/dialogflow');
-const uuid = require('uuid');
+import dialogflow from require('@google-cloud/dialogflow');
+import uuid from require('uuid');
 require('dotenv').config();
 
 const app = express();
