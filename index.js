@@ -1,10 +1,8 @@
-import express from "express";
-import bodyParser from "body-parser";
-import * as dialogflow from "@google-cloud/dialogflow";
-import { v4 as uuidv4 } from "uuid";
-import dotenv from "dotenv";
-
-dotenv.config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const dialogflow = require('@google-cloud/dialogflow');
+const uuid = require('uuid');
+require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,7 +13,7 @@ const sessionClient = new dialogflow.SessionsClient({
   keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
 });
 
-app.post("/webhook", async (req, res) => {
+app.post('/webhook', async (req, res) => {
   try {
     // قراءة الرسالة من JSON الذي يرسله WhatsAuto
     const { message, sender, group_name, phone } = req.body;
@@ -24,7 +22,7 @@ app.post("/webhook", async (req, res) => {
       return res.status(400).json({ reply: "لا يوجد رسالة!" });
     }
 
-    const sessionId = uuidv4();
+    const sessionId = uuid.v4();
     const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
 
     const request = {
@@ -32,9 +30,9 @@ app.post("/webhook", async (req, res) => {
       queryInput: {
         text: {
           text: message,
-          languageCode: "ar", // أو 'en' حسب اللغة
-        },
-      },
+          languageCode: 'ar'  // أو 'en' حسب اللغة
+        }
+      }
     };
 
     const responses = await sessionClient.detectIntent(request);
@@ -42,11 +40,13 @@ app.post("/webhook", async (req, res) => {
 
     // الرد بنفس الصيغة المطلوبة من WhatsAuto
     return res.json({ reply: result.fulfillmentText || "لا يوجد رد." });
+
   } catch (error) {
     console.error("Dialogflow Error:", error);
     return res.status(500).json({ reply: "حدث خطأ في الخادم" });
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
